@@ -27,6 +27,7 @@ by lmg_mem_card_number;
 run;
 
 
+
 /*proc sql;*/
 /*create table abc(compress=yes) as */
 /*select count(distinct LMG_mem_Card_number) from spdtmp7.sd_txn_wb*/

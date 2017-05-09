@@ -3,10 +3,6 @@
 %include'/home/unxsrv/code/Automated_Solutions/Libnames/LIBNAMES.sas';
 
 
-/*data spdtmp7.sd_txn_wb(compress=yes);*/
-/*set sascrm.tn_itm_rev_ae;*/
-/*where txn_dt_wid>=20140101 and txn_dt_wid<=20170415;*/
-/*run;*/
 
 /*2014 custs*/
 
@@ -411,3 +407,4 @@ proc delete data=spdtmp7.VB_WB_OOS_LS_TXN_1;run;
 proc delete data=spdtmp7.VB_WB_OOS_LS_TXN_2;run;
 proc delete data=spdtmp7.VB_WB_OOS_LS_TXN_3;run;
 proc delete data=spdtmp7.VB_WB_OOS_LS_TXN_4;run;
+                                                                                                                                              

@@ -1,5 +1,4 @@
 
-
 %include'/home/unxsrv/code/Automated_Solutions/Libnames/LIBNAMES.sas';
 
 
@@ -11,9 +10,9 @@
 /*2015 custs*/
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN_Cust2015 (compress=yes) as 
+create table spdtmp7.VB_WB_May_LS_TXN_Cust2015 (compress=yes) as 
 select distinct LMG_mem_Card_number from spdtmp7.sd_txn_wb
-where Lmg_concept_name="Lifestyle" and txn_dt_wid<=20160131 and txn_dt_wid >= 20150201
+where Lmg_concept_name="Lifestyle" and txn_dt_wid<=20160430 and txn_dt_wid >= 20150501
 group by LMG_mem_card_number;
 quit;
 
@@ -28,22 +27,20 @@ quit;
 /*2016 custs*/
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN_Cust2016 (compress=yes) as 
+create table spdtmp7.VB_WB_May_LS_TXN_Cust2016 (compress=yes) as 
 select distinct LMG_mem_Card_number from spdtmp7.sd_txn_wb
-where Lmg_concept_name="Lifestyle" and txn_dt_wid>=20160201 and  txn_dt_wid<=20170131
+where Lmg_concept_name="Lifestyle" and txn_dt_wid>=20160501 and  txn_dt_wid<=20170430
 group by LMG_mem_card_number;
 quit;
 
 
 /*winback cust base*/
 
-data spdtmp7.VB_WB_LS_Cust(compress=yes);
-merge spdtmp7.VB_WB_LS_TXN_Cust2015(in=a) spdtmp7.VB_WB_LS_TXN_Cust2016(in=b);
+data spdtmp7.VB_WB_May_LS_Cust(compress=yes);
+merge spdtmp7.VB_WB_May_LS_TXN_Cust2015(in=a) spdtmp7.VB_WB_May_LS_TXN_Cust2016(in=b);
 if a=1 and b=0 ;
 by LMG_mem_card_number;
 run;
-
-
 
 /*proc sql;*/
 /*create table abc(compress=yes) as */
@@ -52,25 +49,25 @@ run;
 /*quit;*/
 
 
-/*proc delete data=spdtmp7.VB_WB_LS_TXN_Cust2015;run;*/
+/*proc delete data=spdtmp7.VB_WB_May_LS_TXN_Cust2015;run;*/
 /**/
-/*proc delete data=spdtmp7.VB_WB_LS_TXN_Cust2016;run;*/
+/*proc delete data=spdtmp7.VB_WB_May_LS_TXN_Cust2016;run;*/
 
 /*Table for wb cust base all obs*/
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN(compress=yes) as
-select a.*,b.* from spdtmp7.VB_WB_LS_Cust a 
-left join (select * from spdtmp7.sd_txn_wb where 20150201 <= txn_dt_wid <= 20160131)as b
+create table spdtmp7.VB_WB_May_LS_TXN(compress=yes) as
+select a.*,b.* from spdtmp7.VB_WB_May_LS_Cust a 
+left join (select * from spdtmp7.sd_txn_wb where 20150501 <= txn_dt_wid <= 20160430) b
 on a.LMG_mem_Card_number=b.LMG_mem_card_number
 ;
 quit;
 
 /*Lifestyle winback customers*/
 
-data spdtmp7.VB_WB_LS_ALL_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
-set spdtmp7.VB_WB_LS_TXN;
-where txn_dt_wid<=20160131 and txn_dt_wid>=20150201 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+data spdtmp7.VB_WB_May_LS_ALL_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
+set spdtmp7.VB_WB_May_LS_TXN;
+where txn_dt_wid<=20160430 and txn_dt_wid>=20150501 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;
@@ -79,7 +76,7 @@ run;
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_ALL_TXN (compress=yes) as
+create table spdtmp7.VB_WB_May_LS_ALL_TXN (compress=yes) as
 select  LMG_mem_card_number, 
            sum(revenue_aed) as sum_revenue_aed, 
            count(distinct date) as no_of_visits, 
@@ -92,15 +89,15 @@ select  LMG_mem_card_number,
            sum(retail_cost_1_aed) as sum_cost_1,
            sum(retail_cost_2_aed) as sum_cost_2
 		   
-from spdtmp7.VB_WB_LS_ALL_TXN
+from spdtmp7.VB_WB_May_LS_ALL_TXN
 group by LMG_MEM_CARD_Number;
 quit;
 
-data spdtmp7.VB_WB_LS_ALL_TXN(compress=yes);
-set spdtmp7.VB_WB_LS_ALL_TXN;
+data spdtmp7.VB_WB_May_LS_ALL_TXN(compress=yes);
+set spdtmp7.VB_WB_May_LS_ALL_TXN;
 format start_date ddmmyys10.;
 format end_date ddmmyys10.;
-recency=intck('day',end_date,'31Jan2016'd);
+recency=intck('day',end_date,'30Apr2016'd);
 active_time=intck('day',start_date,end_date);
 avg_units_per_txn = total_unit/no_of_txn;
 avg_units_per_visit =  total_unit/no_of_visits;
@@ -109,16 +106,16 @@ run;
 
 /* Making 3,6,9 month aggregates for potential Lifestyle winback customer base*/
 
-data spdtmp7.VB_WB_LS_3_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
-set spdtmp7.VB_WB_LS_TXN;
-where txn_Dt_wid>=20151101 and txn_dt_wid<=20160131 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+data spdtmp7.VB_WB_May_LS_3_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
+set spdtmp7.VB_WB_May_LS_TXN;
+where txn_Dt_wid>=20160201 and txn_dt_wid<=20160430 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_3_TXN(compress=yes) as
+create table spdtmp7.VB_WB_May_LS_3_TXN(compress=yes) as
 select  LMG_mem_card_number, 
            sum(revenue_aed) as sum_revenue_aed_3, 
            count(distinct date) as no_of_visits_3, 
@@ -131,7 +128,7 @@ select  LMG_mem_card_number,
            sum(retail_cost_1_aed) as sum_cost_1_3,
            sum(retail_cost_2_aed) as sum_cost_2_3
 
-from spdtmp7.VB_WB_LS_3_TXN
+from spdtmp7.VB_WB_May_LS_3_TXN
 
 group by LMG_MEM_CARD_Number;
 
@@ -139,16 +136,16 @@ quit;
 
 
 /*proc sql;*/
-/*select count(distinct LMG_mem_card_number) from spdtmp7.VB_WB_LS_3_TXN;*/
+/*select count(distinct LMG_mem_card_number) from spdtmp7.VB_WB_May_LS_3_TXN;*/
 /*quit;*/
 
 
 
-data spdtmp7.VB_WB_LS_3_TXN(compress=yes);
-set spdtmp7.VB_WB_LS_3_TXN;
+data spdtmp7.VB_WB_May_LS_3_TXN(compress=yes);
+set spdtmp7.VB_WB_May_LS_3_TXN;
 format start_date_3 ddmmyys10.;
 format end_date_3 ddmmyys10.;
-recency_3=intck('day',end_date_3,'31Jan2016'd);
+recency_3=intck('day',end_date_3,'30Apr2016'd);
 active_time_3=intck('day',start_date_3,end_date_3);
 avg_units_per_txn_3 = total_unit_3/no_of_txn_3;
 avg_units_per_visit_3 =  total_unit_3/no_of_visits_3;
@@ -157,16 +154,16 @@ run;
 /*6months*/
 
 
-data spdtmp7.VB_WB_LS_6_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
-set spdtmp7.VB_WB_LS_TXN;
-where txn_Dt_wid>=20150801 and txn_dt_wid<=20160131 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+data spdtmp7.VB_WB_May_LS_6_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
+set spdtmp7.VB_WB_May_LS_TXN;
+where txn_Dt_wid>=20151101 and txn_dt_wid<=20160430 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_6_TXN(compress=yes) as
+create table spdtmp7.VB_WB_May_LS_6_TXN(compress=yes) as
 select distinct LMG_mem_card_number, 
            sum(revenue_aed) as sum_revenue_aed_6, 
            count(distinct date) as no_of_visits_6, 
@@ -178,7 +175,7 @@ select distinct LMG_mem_card_number,
            sum(base_points_accrued) as total_points_6,
 		   sum(retail_cost_1_aed) as sum_cost_1_6,
 		   sum(retail_cost_2_aed) as sum_cost_2_6 
-from spdtmp7.VB_WB_LS_6_TXN
+from spdtmp7.VB_WB_May_LS_6_TXN
 
 group by LMG_MEM_CARD_Number;
 
@@ -186,11 +183,11 @@ quit;
 
 
 
-data spdtmp7.VB_WB_LS_6_TXN(compress=yes);
-set spdtmp7.VB_WB_LS_6_TXN;
+data spdtmp7.VB_WB_May_LS_6_TXN(compress=yes);
+set spdtmp7.VB_WB_May_LS_6_TXN;
 format start_date_6 ddmmyys10.;
 format end_date_6 ddmmyys10.;
-recency_6=intck('day',end_date_6,'31Jan2016'd);
+recency_6=intck('day',end_date_6,'30Apr2016'd);
 active_time_6=intck('day',start_date_6,end_date_6);
 avg_units_per_txn_6 = total_unit_6/no_of_txn_6;
 avg_units_per_visit_6 =  total_unit_6/no_of_visits_6;
@@ -198,15 +195,15 @@ run;
 
 /*9months*/
 
-data spdtmp7.VB_WB_LS_9_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
-set spdtmp7.VB_WB_LS_TXN;
-where txn_Dt_wid>=20150501 and txn_dt_wid<=20160131 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+data spdtmp7.VB_WB_May_LS_9_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
+set spdtmp7.VB_WB_May_LS_TXN;
+where txn_Dt_wid>=20150801 and txn_dt_wid<=20160430 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;
 
 proc sql;
-create table spdtmp7.VB_WB_LS_9_TXN(compress=yes) as
+create table spdtmp7.VB_WB_May_LS_9_TXN(compress=yes) as
 select distinct LMG_mem_card_number, 
            sum(revenue_aed) as sum_revenue_aed_9, 
            count(distinct date) as no_of_visits_9, 
@@ -219,7 +216,7 @@ select distinct LMG_mem_card_number,
            sum(retail_cost_1_aed) as sum_cost_1_9,
            sum(retail_cost_2_aed) as sum_cost_2_9
 
-from spdtmp7.VB_WB_LS_9_TXN
+from spdtmp7.VB_WB_May_LS_9_TXN
 
 group by LMG_MEM_CARD_Number;
 
@@ -231,11 +228,11 @@ quit;
 /*quit;*/
 
 
-data spdtmp7.VB_WB_LS_9_TXN(compress=yes);
-set spdtmp7.VB_WB_LS_9_TXN;
+data spdtmp7.VB_WB_May_LS_9_TXN(compress=yes);
+set spdtmp7.VB_WB_May_LS_9_TXN;
 format start_date_9 ddmmyys10.;
 format end_date_9 ddmmyys10.;
-recency_9=intck('day',end_date_9,'31Jan2016'd);
+recency_9=intck('day',end_date_9,'30Apr2016'd);
 active_time_9=intck('day',start_date_9,end_date_9);
 avg_units_per_txn_9 = total_unit_9/no_of_txn_9;
 avg_units_per_visit_9 =  total_unit_9/no_of_visits_9;
@@ -245,34 +242,33 @@ run;
 /*join all tables*/
 
 proc sql; 
-create table spdtmp7.VB_WB_LS_TXN_Overall (compress=yes) as
-select a.*,b.*,c.*,d.* from spdtmp7.VB_WB_LS_ALL_TXN a 
-left join  spdtmp7.VB_WB_LS_3_TXN b on a.Lmg_mem_card_number=b.LMG_mem_card_number
-left join spdtmp7.VB_WB_LS_6_TXN c on a.LMG_mem_card_number=c.LMG_mem_card_number
-left join spdtmp7.VB_WB_LS_9_TXN d on a.LMG_mem_card_number=d.LMG_mem_card_number;
+create table spdtmp7.VB_WB_May_LS_TXN_Overall (compress=yes) as
+select a.*,b.*,c.*,d.* from spdtmp7.VB_WB_May_LS_ALL_TXN a 
+left join  spdtmp7.VB_WB_May_LS_3_TXN b on a.Lmg_mem_card_number=b.LMG_mem_card_number
+left join spdtmp7.VB_WB_May_LS_6_TXN c on a.LMG_mem_card_number=c.LMG_mem_card_number
+left join spdtmp7.VB_WB_May_LS_9_TXN d on a.LMG_mem_card_number=d.LMG_mem_card_number;
 quit;
 
 
 
-proc delete data=spdtmp7.VB_WB_LS_3_TXN;
-proc delete data=spdtmp7.VB_WB_LS_6_TXN;
-proc delete data=spdtmp7.VB_WB_LS_9_TXN;
+proc delete data=spdtmp7.VB_WB_May_LS_3_TXN;
+proc delete data=spdtmp7.VB_WB_May_LS_6_TXN;
+proc delete data=spdtmp7.VB_WB_May_LS_9_TXN;
 
 
 
 
-data spdtmp7.VB_WB_LS_TXN_1(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
+data spdtmp7.VB_WB_May_LS_TXN_1(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
 set spdtmp7.sd_txn_wb;
-where 20150201<=txn_dt_wid<=20160131 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+where 20150501<=txn_dt_wid<=20160430 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;
- 
 
 
-data spdtmp7.VB_WB_LS_TXN_2(compress=yes);
+data spdtmp7.VB_WB_May_LS_TXN_2(compress=yes);
 length dept $ 20;
-set spdtmp7.VB_WB_LS_TXN_1;
+set spdtmp7.VB_WB_May_LS_TXN_1;
 
 if LMG_X_DEPT_CD in ('400','402','403','401') then dept = "Beauty";
 else if LMG_X_DEPT_CD = '405' then dept = "TeenGifts";
@@ -285,7 +281,7 @@ run;
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN_3(compress=yes) as
+create table spdtmp7.VB_WB_May_LS_TXN_3(compress=yes) as
 select LMG_mem_card_number,
 sum(case when dept="Beauty" then revenue_aed else . end) as revenue_AED_Beauty,
 sum(case when dept="TeenGifts" then revenue_aed else . end) as revenue_Aed_TG,
@@ -311,14 +307,14 @@ count(distinct (case when dept="Fashion"   then txn_dt_wid else . end)) as no_of
 count(distinct (case when dept="HomeFurnishing"   then txn_dt_wid else . end)) as no_of_visits_HF,
 count(distinct (case when dept="NA"   then txn_dt_wid else . end)) as no_of_visits_Others
 
-from spdtmp7.VB_WB_LS_TXN_2
+from spdtmp7.VB_WB_May_LS_TXN_2
 group by LMG_mem_card_number;
 quit;
 
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN_4(compress=yes) as 
+create table spdtmp7.VB_WB_May_LS_TXN_4(compress=yes) as 
 select LMG_mem_card_number,
 sum(case when lmg_x_dept_cd = '400' then revenue_aed else . end) as revenue_AED_400,
 sum(case when lmg_x_dept_cd = '401' then revenue_aed else . end) as revenue_AED_401,
@@ -382,7 +378,7 @@ count(distinct (case when lmg_x_dept_cd = '418'   then invoice_number else '' en
 count(distinct (case when lmg_x_dept_cd = '419'   then invoice_number else '' end)) as no_of_txn_419
 
 
-from spdtmp7.VB_WB_LS_TXN_2 
+from spdtmp7.VB_WB_May_LS_TXN_2 
 group by LMG_mem_card_number;
 quit;
 
@@ -390,20 +386,22 @@ quit;
 
 
 proc sql;
-create table spdtmp7.VB_WB_LS_TXN_5(compress=yes) as
-select a.*,b.*,c.* from spdtmp7.VB_WB_LS_TXN_Overall a 
-left join  spdtmp7.VB_WB_LS_TXN_3 b on a.LMG_mem_card_number=b.LMG_mem_card_number
-left join  spdtmp7.VB_WB_LS_TXN_4 c on a.LMG_mem_card_number=c.LMG_mem_card_number
+create table spdtmp7.VB_WB_May_LS_TXN_5(compress=yes) as
+select a.*,b.*,c.* from spdtmp7.VB_WB_May_LS_TXN_Overall a 
+left join  spdtmp7.VB_WB_May_LS_TXN_3 b on a.LMG_mem_card_number=b.LMG_mem_card_number
+left join  spdtmp7.VB_WB_May_LS_TXN_4 c on a.LMG_mem_card_number=c.LMG_mem_card_number
 ;
 quit; 
 
 
-proc means data=spdtmp7.VB_WB_LS_TXN_5;
+proc means data=spdtmp7.VB_WB_May_LS_TXN_5;
 run;
 
 
+proc delete data=spdtmp7.VB_WB_May_LS_TXN_1;run;
+proc delete data=spdtmp7.VB_WB_May_LS_TXN_2;run;
+proc delete data=spdtmp7.VB_WB_May_LS_TXN_3;run;
+proc delete data=spdtmp7.VB_WB_May_LS_TXN_4;run;
 
-proc delete data=spdtmp7.VB_WB_LS_TXN_1;run;
-proc delete data=spdtmp7.VB_WB_LS_TXN_2;run;
-proc delete data=spdtmp7.VB_WB_LS_TXN_3;run;
-proc delete data=spdtmp7.VB_WB_LS_TXN_4;run;
+
+

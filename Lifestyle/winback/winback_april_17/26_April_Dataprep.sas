@@ -109,7 +109,7 @@ run;
 
 data spdtmp7.VB_WB_Apr_LS_3_TXN(compress=yes keep=lmg_mem_card_number txn_dt_wid lmg_x_dept_cd revenue_aed invoice_number units item_code base_points_accrued retail_cost_1_aed retail_cost_2_aed date);
 set spdtmp7.VB_WB_Apr_LS_TXN;
-where txn_Dt_wid>=20151101 and txn_dt_wid<=20160331 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
+where txn_Dt_wid>=20160101 and txn_dt_wid<=20160331 and LMG_concept_name="Lifestyle" and revenue_aed>0 and units>0 and base_points_accrued >0 ;
 date = INPUT(PUT(TXN_DT_WID,8.),YYMMDD8.); 
            format date ddmmyys10.;
 run;

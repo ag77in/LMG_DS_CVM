@@ -187,7 +187,6 @@ run;
 
 
 
-
 data spdtmp7.VB_WB_OOS_LS_Alldata12(compress=yes);
 set spdtmp7.VB_WB_OOS_LS_Alldata11;
            /* Age Dummy */

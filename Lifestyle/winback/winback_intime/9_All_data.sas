@@ -50,6 +50,9 @@ set SPDTMP7.VB_RFM_SGMT_LS_AE ( drop= LSTAGE_SGMNT) ;
 if rfm_sgmnt_n = "0_Not Segmented" then rfm_sgmnt_n = "0 - Not Segmented"  ;
 run;
 
+proc freq data= SPDTMP7.VB_RFM_SGMT_LS_AE_1;
+tables rfm_sgmnt_n;
+run;
 
 /* Getting the Lifestage segmentation data for Lifestyle */
 
@@ -67,3 +70,9 @@ on a.LMG_MEM_CARD_NUMBER = b.LMG_MEM_CARD_NUMBER
 left join SPDTMP7.VB_LSTG_SGMT_AE as c
 on a.LMG_MEM_CARD_NUMBER = c.LMG_MEM_CARD_NUMBER;
 quit;
+
+
+
+proc freq data= spdtmp7.VB_WB_LS_Alldata1;
+tables rfm_sgmnt_n;
+run;

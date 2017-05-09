@@ -134,3 +134,8 @@ Data SPDTMP7.VB_CUS_TN_ITM_REV_AE_Test (Drop= data_divide);
 set SPDTMP7.VB_CUS_TN_ITM_REV_AE_7;
 where data_divide = "Test";
 run;
+
+
+
+proc contents data= SPDTMP7.VB_CUS_TN_ITM_REV_AE_7;
+run;

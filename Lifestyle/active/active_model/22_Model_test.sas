@@ -13,14 +13,14 @@ output out = SPDTMP7.VB_CUS_TN_ITM_REV_AE_results_f    p = pred_RESPONSE ;
 run;
 ods graphics off;
 
-proc npar1way data=SPDTMP7.VB_CUS_TN_ITM_REV_AE_results_new edf;
+proc npar1way data=SPDTMP7.VB_CUS_TN_ITM_REV_AE_Test_res edf;
         class Bought_flag;
-        var pred_RESPONSE;
+        var P_1;
  run;
    
 
 data SPDTMP7.VB_CUS_TN_ITM_REV_AE_Conf_new;
-set SPDTMP7.VB_CUS_TN_ITM_REV_AE_results_new;
+set SPDTMP7.VB_CUS_TN_ITM_REV_AE_results_f;
 
 if pred_response >= 0.13 then prediction = 1;
 else prediction = 0;
@@ -70,6 +70,8 @@ proc sql;
  ;
  quit;
 
+ proc contents data=SPDTMP7.VB_CUS_TN_ITM_REV_AE_Test_res;
+ run;
 
 
  data cum_lift;

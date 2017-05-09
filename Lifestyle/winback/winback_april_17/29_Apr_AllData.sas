@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 proc sql; 
 create table spdtmp7.VB_WB_Apr_LS_Alldata (compress=yes, drop = age) as
 select a.*,b.*,c.*,d.*,e.*,f.*,g.*,h.* from spdtmp7.VB_WB_Apr_LS_TXN_5 a 
@@ -24,9 +19,6 @@ proc delete data=spdtmp7.VB_WB_Apr_LS_HB_TXN_Overall;run;
 proc delete data=spdtmp7.VB_WB_Apr_LS_BS_TXN_Overall;run;
 proc delete data=spdtmp7.VB_WB_Apr_LS_MX_TXN_Overall;run; 
 proc delete data=spdtmp7.VB_WB_Apr_LS_SM_TXN_Overall;run;
-
-
-
 
 
 /* Joining the customer demographic details table */

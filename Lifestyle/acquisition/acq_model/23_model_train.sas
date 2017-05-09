@@ -352,6 +352,7 @@ proc freq data= spdtmp7.VB_AQ_LS_Alldata16_Train_Conf;
 run;
 
 
+
 /* Lift calculation */
 
  proc rank data=spdtmp7.VB_AQ_LS_Alldata16_Train_res out= spdtmp7.VB_AQ_LS_Alldata16_Train_dec ties=low

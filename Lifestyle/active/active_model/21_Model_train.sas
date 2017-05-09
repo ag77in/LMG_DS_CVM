@@ -77,6 +77,9 @@ proc sql;
  quit;
 
 
+ proc contents data=SPDTMP7.VB_CUS_TN_ITM_REV_AE_results_new;
+ run;
+
 
  data cum_lift;
  set lift;

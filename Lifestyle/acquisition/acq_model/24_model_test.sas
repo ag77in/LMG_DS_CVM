@@ -60,6 +60,9 @@ proc sql;
  quit;
 
 
+ proc contents data=  spdtmp7.VB_AQ_LS_Alldata16_Test_res;
+ run;
+
 
  data cum_lift;
  set spdtmp7.VB_AQ_LS_Alldata16_Test_lift;
