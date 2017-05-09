@@ -10,6 +10,8 @@ Developing a CVM product for Analytics at Landmark Group
 
 # Project Team:
 
+# Data Science Team:
+
 Sayak Dutta
 
 Vijay Bhaskar
@@ -17,6 +19,12 @@ Vijay Bhaskar
 Aman Goswami
 
 Anirban Nandi
+
+# Data Engineering Team
+
+Samrat Chowdhury
+
+Vivek Rathod
 
 # Phase I:
 
